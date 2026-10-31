@@ -61,11 +61,15 @@ export default function Home() {
           <div style={{ width: '40px', height: '40px', backgroundColor: '#3B82F6', borderRadius: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '24px' }}>⚡</div>
           <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '800', background: 'linear-gradient(to right, #60A5FA, #A78BFA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>PromptForge</h1>
         </div>
-        {user && (
+        
+        {/* هذا الجزء تم تعديله ليظهر زر الدخول أو الخروج */}
+        {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             <span style={{ fontSize: '14px', color: '#94A3B8' }}>{user.email}</span>
             <button onClick={handleLogout} style={{ padding: '8px 16px', backgroundColor: 'transparent', color: '#EF4444', border: '1px solid #EF4444', borderRadius: '8px', cursor: 'pointer', transition: '0.3s' }}>خروج</button>
           </div>
+        ) : (
+          <Link href="/login" style={{ padding: '8px 16px', backgroundColor: '#3B82F6', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>تسجيل الدخول</Link>
         )}
       </nav>
 
