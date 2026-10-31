@@ -10,6 +10,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [limitReached, setLimitReached] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -26,17 +27,35 @@ export default function Home() {
   const handleAnalyze = async () => {
     setLoading(true);
     setResult('');
+    setLimitReached(false);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('يجب تسجيل الدخول أولاً');
+
       const res = await fetch('/api/analyze', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
         body: JSON.stringify({ url })
       });
+      
       const data = await res.json();
-      if (data.error) throw new Error(data.error);
+      
+      if (!res.ok) {
+        if (res.status === 403) {
+          setLimitReached(true);
+          throw new Error(data.error);
+        }
+        throw new Error(data.error || 'حدث خطأ ما');
+      }
+      
       setResult(data.prompt);
     } catch (e: any) {
-      setResult('حدث خطأ: ' + e.message);
+      if (!e.message.includes('استنفدت')) {
+        setResult('حدث خطأ: ' + e.message);
+      }
     }
     setLoading(false);
   };
@@ -55,14 +74,12 @@ export default function Home() {
 
   return (
     <main style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      {/* Header */}
       <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', padding: '20px', backgroundColor: '#1E293B', borderRadius: '16px', border: '1px solid #334155' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ width: '40px', height: '40px', backgroundColor: '#3B82F6', borderRadius: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '24px' }}>⚡</div>
           <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '800', background: 'linear-gradient(to right, #60A5FA, #A78BFA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>PromptForge</h1>
         </div>
         
-        {/* هذا الجزء تم تعديله ليظهر زر الدخول أو الخروج */}
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             <span style={{ fontSize: '14px', color: '#94A3B8' }}>{user.email}</span>
@@ -95,6 +112,14 @@ export default function Home() {
           >
             {loading ? '⏳ جاري التحليل بالذكاء الاصطناعي...' : '✨ تحليل الفيديو وتوليد البرومبت'}
           </button>
+
+          {limitReached && (
+            <div style={{ marginTop: '20px', padding: '20px', backgroundColor: '#7F1D1D', borderRadius: '12px', border: '1px solid #EF4444', textAlign: 'center' }}>
+              <h3 style={{ margin: '0 0 10px 0', color: '#FCA5A5' }}>لقد استنفدت تحليلك المجاني الشهري</h3>
+              <p style={{ color: '#FECACA', fontSize: '14px', marginBottom: '15px' }}>للحصول على تحليلات غير محدودة، يرجى ترقية حسابك.</p>
+              <Link href="/pricing" style={{ display: 'inline-block', padding: '12px 24px', backgroundColor: '#EF4444', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>ترقية الحساب الآن</Link>
+            </div>
+          )}
 
           {result && (
             <div style={{ marginTop: '30px', padding: '20px', backgroundColor: '#0F172A', borderRadius: '16px', border: '1px solid #3B82F6' }}>
