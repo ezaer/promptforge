@@ -1,7 +1,29 @@
 "use client";
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 
 export default function PricingPage() {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+  }, []);
+
+  const handleSubscribe = () => {
+    if (!user) {
+      alert('يرجى تسجيل الدخول أولاً للاشتراك');
+      window.location.href = '/login';
+      return;
+    }
+    // هذا هو الرابط المبدئي، سنستبدله برابط Lemon Squeezy الحقيقي لاحقاً
+    // لاحظ أننا نمرر user_id و email حتى يعرف الـ Webhook من هو المشتري
+    const lemonSqueezyUrl = `https://YOUR_STORE.lemonsqueezy.com/checkout/buy/YOUR_PRODUCT_ID?checkout[email]=${user.email}&checkout[custom][user_id]=${user.id}`;
+    window.location.href = lemonSqueezyUrl;
+  };
+
   return (
     <main style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 20px', direction: 'rtl' }}>
       <div style={{ textAlign: 'center', marginBottom: '50px' }}>
@@ -41,7 +63,7 @@ export default function PricingPage() {
             <li>✅ دعم فني ذو أولوية</li>
           </ul>
           
-          <button style={{ marginTop: 'auto', display: 'block', width: '100%', padding: '14px', background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer' }}>اشترك الآن (قريباً)</button>
+          <button onClick={handleSubscribe} style={{ marginTop: 'auto', display: 'block', width: '100%', padding: '14px', background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer' }}>اشترك الآن</button>
         </div>
       </div>
     </main>
