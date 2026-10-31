@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
-"use client";    
+
+"use client";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
@@ -37,7 +38,7 @@ export default function Home() {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': 'Bearer ' + session.access_token
         },
         body: JSON.stringify({ url })
       });
