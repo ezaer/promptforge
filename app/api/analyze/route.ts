@@ -39,9 +39,14 @@ export async function POST(req: Request) {
       usage = { analysis_count: 0 };
     }
 
-    if (usage.analysis_count >= 1) {
-      return NextResponse.json({ error: 'لقد استنفدت تحليلك المجاني. يرجى الترقية للاستمرار.' }, { status: 403 });
-    }
+    // إذا كان المستخدم Pro، نسمح له بـ 30 تحليل
+if (usage.is_pro && usage.analysis_count >= 30) {
+  return NextResponse.json({ error: 'لقد استنفدت حصتك الشهرية (30 تحليل).' }, { status: 403 });
+}
+// إذا كان مجانياً، نسمح له بتحليل واحد فقط
+if (!usage.is_pro && usage.analysis_count >= 1) {
+  return NextResponse.json({ error: 'لقد استنفدت تحليلك المجاني. يرجى الترقية للاستمرار.' }, { status: 403 });
+}
 
     // استدعاء Gemini (تم تغييره إلى 1.5-flash للاستقرار والسرعة)
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
