@@ -35,7 +35,6 @@ export async function POST(req: Request) {
     let { data: usage } = await supabaseAdmin.from('user_usage').select('*').eq('id', user.id).single();
     
     if (!usage) {
-      // مستخدم جديد، ننشئ له سجلاً
       await supabaseAdmin.from('user_usage').insert({ id: user.id, analysis_count: 0 });
       usage = { analysis_count: 0 };
     }
@@ -44,8 +43,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'لقد استنفدت تحليلك المجاني. يرجى الترقية للاستمرار.' }, { status: 403 });
     }
 
-    // استدعاء Gemini
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
+    // استدعاء Gemini (تم تغييره إلى 1.5-flash للاستقرار والسرعة)
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
