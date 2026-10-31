@@ -1,6 +1,8 @@
+import './globals.css';
+
 export const metadata = {
-  title: 'PromptForge',
-  description: 'AI Video Production Prompt Generator',
+  title: 'PromptForge | AI Production Prompts',
+  description: 'Generate original video production prompts from YouTube links.',
 };
 
 export default function RootLayout({
@@ -10,7 +12,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ar" dir="rtl">
-      <body>{children}</body>
+      <head>
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet" />
+      </head>
+      <body style={{ margin: 0, padding: 0, fontFamily: "'Cairo', sans-serif", backgroundColor: '#0B1120', color: '#F8FAFC', minHeight: '100vh' }}>
+        {children}
+      </body>
     </html>
   );
 }
