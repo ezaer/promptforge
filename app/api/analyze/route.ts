@@ -13,11 +13,10 @@ export async function POST(req: Request) {
 
     const token = authHeader.replace('Bearer ', '');
     
-    // التحقق من هوية المستخدم
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL || '',
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
-      { global: { headers: { Authorization: `Bearer ${token}` } } }
+      { global: { headers: { Authorization: 'Bearer ' + token } } }
     );
 
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -25,13 +24,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'جلسة غير صالحة. يرجى إعادة تسجيل الدخول.' }, { status: 401 });
     }
 
-    // استخدام المفتاح السري لإدارة العداد
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL || '',
       process.env.SUPABASE_SERVICE_ROLE_KEY || ''
     );
 
-    // فحص العداد
     let { data: usage } = await supabaseAdmin.from('user_usage').select('*').eq('id', user.id).single();
     
     if (!usage) {
@@ -39,17 +36,16 @@ export async function POST(req: Request) {
       usage = { analysis_count: 0 };
     }
 
-    // إذا كان المستخدم Pro، نسمح له بـ 30 تحليل
-if (usage.is_pro && usage.analysis_count >= 30) {
-  return NextResponse.json({ error: 'لقد استنفدت حصتك الشهرية (30 تحليل).' }, { status: 403 });
-}
-// إذا كان مجانياً، نسمح له بتحليل واحد فقط
-if (!usage.is_pro && usage.analysis_count >= 1) {
-  return NextResponse.json({ error: 'لقد استنفدت تحليلك المجاني. يرجى الترقية للاستمرار.' }, { status: 403 });
-}
+    if (usage.is_pro && usage.analysis_count >= 30) {
+      return NextResponse.json({ error: 'لقد استنفدت حصتك الشهرية (30 تحليل).' }, { status: 403 });
+    }
+    if (!usage.is_pro && usage.analysis_count >= 1) {
+      return NextResponse.json({ error: 'لقد استنفدت تحليلك المجاني. يرجى الترقية للاستمرار.' }, { status: 403 });
+    }
 
-    // استدعاء Gemini (تم تغييره إلى 1.5-flash للاستقرار والسرعة)
-    const response = await fetch(\https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}\, {
+    const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
+
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -68,7 +64,6 @@ if (!usage.is_pro && usage.analysis_count >= 1) {
       throw new Error(data.error.message || "فشل التحليل");
     }
 
-    // زيادة العداد بعد نجاح التحليل
     await supabaseAdmin.from('user_usage').update({ analysis_count: usage.analysis_count + 1 }).eq('id', user.id);
 
     const prompt = data.candidates[0].content.parts[0].text;
