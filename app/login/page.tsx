@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic';
+
 "use client";
 import { supabase } from '@/lib/supabase';
 import { Auth } from '@supabase/auth-ui-react';
