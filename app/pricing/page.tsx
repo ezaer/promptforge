@@ -3,6 +3,9 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 
+// رابط الدفع الخاص بك من Polar
+const POLAR_CHECKOUT_URL = "https://buy.polar.sh/polar_cl_r3yyvLxm8Yf55sfUBe4ocnI8cb6ugahaa9wL50dChQ7";
+
 export default function PricingPage() {
   const [user, setUser] = useState<any>(null);
 
@@ -18,8 +21,13 @@ export default function PricingPage() {
       window.location.href = '/login';
       return;
     }
-    const lemonSqueezyUrl = `https://YOUR_STORE.lemonsqueezy.com/checkout/buy/YOUR_PRODUCT_ID?checkout[email]=${user.email}&checkout[custom][user_id]=${user.id}`;
-    window.location.href = lemonSqueezyUrl;
+    
+    // إضافة بريد المستخدم ومعرّفه إلى رابط الدفع
+    const url = new URL(POLAR_CHECKOUT_URL);
+    url.searchParams.append('checkout[email]', user.email);
+    url.searchParams.append('checkout[custom][user_id]', user.id);
+    
+    window.location.href = url.toString();
   };
 
   return (
@@ -31,6 +39,7 @@ export default function PricingPage() {
       </div>
 
       <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+        {/* الخطة المجانية */}
         <div style={{ flex: '1 1 300px', backgroundColor: '#1E293B', padding: '40px', borderRadius: '24px', border: '1px solid #334155', display: 'flex', flexDirection: 'column' }}>
           <h2 style={{ fontSize: '24px', marginBottom: '10px' }}>المجانية</h2>
           <p style={{ color: '#94A3B8', marginBottom: '20px' }}>للتجربة والاستكشاف</p>
@@ -45,6 +54,7 @@ export default function PricingPage() {
           <Link href="/" style={{ marginTop: 'auto', display: 'block', textAlign: 'center', padding: '14px', backgroundColor: '#334155', color: 'white', borderRadius: '12px', textDecoration: 'none', fontWeight: 'bold' }}>ابدأ الآن</Link>
         </div>
 
+        {/* الخطة الاحترافية */}
         <div style={{ flex: '1 1 300px', backgroundColor: '#0F172A', padding: '40px', borderRadius: '24px', border: '2px solid #3B82F6', position: 'relative', display: 'flex', flexDirection: 'column', boxShadow: '0 0 30px rgba(59, 130, 246, 0.2)' }}>
           <div style={{ position: 'absolute', top: '-15px', right: '50%', transform: 'translateX(50%)', backgroundColor: '#3B82F6', color: 'white', padding: '5px 15px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>الأكثر شيوعاً</div>
           
