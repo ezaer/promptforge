@@ -23,7 +23,6 @@ export default function RootLayout({
           {children}
         </div>
 
-        {/* Footer */}
         <footer style={{ marginTop: 'auto', padding: '20px', textAlign: 'center', borderTop: '1px solid #1E293B', backgroundColor: '#0B1120' }}>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', fontSize: '14px' }}>
             <a href="/terms" style={{ color: '#94A3B8', textDecoration: 'none' }}>شروط الخدمة</a>
