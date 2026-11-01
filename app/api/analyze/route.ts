@@ -1,4 +1,6 @@
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
@@ -44,7 +46,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'لقد استنفدت تحليلك المجاني. يرجى الترقية للاستمرار.' }, { status: 403 });
     }
 
-    // استخدام النموذج الأحدث gemini-3.8-flash
     const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=" + apiKey;
 
     const response = await fetch(apiUrl, {
