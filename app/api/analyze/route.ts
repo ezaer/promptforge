@@ -43,8 +43,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'لقد استنفدت تحليلك المجاني. يرجى الترقية للاستمرار.' }, { status: 403 });
     }
 
-    // استخدام النموذج الأحدث gemini-2.5-flash
-    const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
+    // استخدام النموذج الأحدث gemini-3.8-flash
+    const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=" + apiKey;
 
     const response = await fetch(apiUrl, {
       method: 'POST',
