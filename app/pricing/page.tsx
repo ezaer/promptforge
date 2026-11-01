@@ -26,7 +26,7 @@ export default function PricingPage() {
     const url = new URL(POLAR_CHECKOUT_URL);
     url.searchParams.append('checkout[email]', user.email);
     url.searchParams.append('checkout[custom][user_id]', user.id);
-    
+    url.searchParams.append('allow_discount_codes', 'true');
     window.location.href = url.toString();
   };
 
