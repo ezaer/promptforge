@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 "use client";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -81,7 +83,8 @@ export default function Home() {
         </div>
         
         {user ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <Link href="/pricing" style={{ padding: '8px 16px', backgroundColor: 'transparent', color: '#60A5FA', border: '1px solid #3B82F6', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}>💎 الأسعار</Link>
             <span style={{ fontSize: '14px', color: '#94A3B8' }}>{user.email}</span>
             <button onClick={handleLogout} style={{ padding: '8px 16px', backgroundColor: 'transparent', color: '#EF4444', border: '1px solid #EF4444', borderRadius: '8px', cursor: 'pointer', transition: '0.3s' }}>خروج</button>
           </div>
@@ -112,6 +115,10 @@ export default function Home() {
           >
             {loading ? '⏳ جاري التحليل بالذكاء الاصطناعي...' : '✨ تحليل الفيديو وتوليد البرومبت'}
           </button>
+
+          <div style={{ textAlign: 'center', marginTop: '15px' }}>
+            <Link href="/pricing" style={{ color: '#94A3B8', fontSize: '13px', textDecoration: 'underline' }}>تحتاج المزيد من التحليلات؟ عرض الخطط والأسعار</Link>
+          </div>
 
           {limitReached && (
             <div style={{ marginTop: '20px', padding: '20px', backgroundColor: '#7F1D1D', borderRadius: '12px', border: '1px solid #EF4444', textAlign: 'center' }}>
