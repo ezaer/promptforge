@@ -22,11 +22,12 @@ export default function PricingPage() {
       return;
     }
     
-    // إضافة بريد المستخدم ومعرّفه إلى رابط الدفع
+    // الطريقة الصحيحة لتمرير البيانات في Polar
     const url = new URL(POLAR_CHECKOUT_URL);
-    url.searchParams.append('checkout[email]', user.email);
-    url.searchParams.append('checkout[custom][user_id]', user.id);
-    url.searchParams.append('allow_discount_codes', 'true');
+    url.searchParams.append('customer_email', user.email);
+    url.searchParams.append('metadata[user_id]', user.id); // نمرر المعرف هنا ليقوم الـ Webhook بقراءته
+    url.searchParams.append('discount_code', 'Test100'); // نمرر كود الخصم تلقائياً للتجربة
+    
     window.location.href = url.toString();
   };
 
